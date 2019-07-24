@@ -28,18 +28,26 @@ app.get('/api', (request, response) => {
     response.send('<h1>Phonebook API</h1>') // prints the argument to the route
 })
 
-
-
-
 app.get('/info', (request, response) => {
-    let date = new Date()
-    let content = '<p>Phonebook has info for ' + persons.length + ' people</br>' + date + '</p>'
+    const date = new Date()
+    const content = '<p>Phonebook has info for ' + persons.length + ' people.</br>' + date + '</p>'
 
     response.send(content)
 })
 
 app.get('/api/persons', (request, response) => {
     response.json(persons) // json string that corresponds to javaScript persons object
+})
+
+app.get('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const person = persons.find(person => person.id === id)
+
+    if (person) {
+        response.json(person)
+    } else {
+        response.status(404).end()
+    }
 })
 
 const PORT = 3001 // server port
