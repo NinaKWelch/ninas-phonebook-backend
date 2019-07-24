@@ -24,9 +24,18 @@ let persons = [
     }
 ]
 
-
 app.get('/api', (request, response) => {
     response.send('<h1>Phonebook API</h1>') // prints the argument to the route
+})
+
+
+
+
+app.get('/info', (request, response) => {
+    let date = new Date()
+    let content = '<p>Phonebook has info for ' + persons.length + ' people</br>' + date + '</p>'
+
+    response.send(content)
 })
 
 app.get('/api/persons', (request, response) => {
