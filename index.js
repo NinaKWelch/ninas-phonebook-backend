@@ -1,5 +1,8 @@
 const express = require('express')
 const app = express()
+const bodyParser = require('body-parser')
+
+app.use(bodyParser.json())
 
 let persons = [
     {
@@ -24,15 +27,15 @@ let persons = [
     }
 ]
 
-app.get('/api', (request, response) => {
-    response.send('<h1>Phonebook API</h1>') // prints the argument to the route
-})
-
 app.get('/info', (request, response) => {
     const date = new Date()
     const content = '<p>Phonebook has info for ' + persons.length + ' people.</br>' + date + '</p>'
 
     response.send(content)
+})
+
+app.get('/api', (request, response) => {
+    response.send('<h1>Phonebook API</h1>') // prints the argument to the route
 })
 
 app.get('/api/persons', (request, response) => {
@@ -55,6 +58,20 @@ app.delete('/api/persons/:id', (request, response) => {
     persons = persons.filter(person => person.id !== id)
 
     response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+    
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: Math.floor(Math.random() * 10000)
+    }
+
+    persons.concat(person)
+    
+    response.json(person)
 })
 
 const PORT = 3001 // server port
