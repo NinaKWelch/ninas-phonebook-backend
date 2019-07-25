@@ -10,6 +10,7 @@ morgan.token('body', function (request) { return JSON.stringify(request.body) })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.use(cors())
+app.use(express.static('build'))
 
 let persons = [
     {
@@ -99,7 +100,7 @@ const unknownEndpoint = (request, response) => {
   
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001 // server port
+const PORT = process.env.PORT || 3001 // port for heroku or dev
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`) 
