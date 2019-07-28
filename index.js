@@ -1,7 +1,10 @@
+require('dotenv').config()
+
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
 const bodyParser = require('body-parser')
-var morgan  = require('morgan')
+const morgan  = require('morgan')
 const cors = require('cors')
 
 app.use(bodyParser.json())
@@ -12,6 +15,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 app.use(cors())
 app.use(express.static('build'))
 
+/*
 let persons = [
     {
         name: 'Arto Hellas',
@@ -34,6 +38,7 @@ let persons = [
         id: 4
     }
 ]
+*/
 
 app.get('/info', (request, response) => {
     const date = new Date()
@@ -47,9 +52,12 @@ app.get('/api', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons) // json string that corresponds to javaScript persons object
+    Person.find({}).then(persons => {
+        response.json(persons.map(person => person.toJSON())) //returns a new array with every item mapped to a new object
+    });    
 })
 
+/*
 app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     const person = persons.find(person => person.id === id)
@@ -93,6 +101,7 @@ app.post('/api/persons', (request, response) => {
 
     response.json(person)
 })
+*/
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
@@ -100,7 +109,7 @@ const unknownEndpoint = (request, response) => {
   
 app.use(unknownEndpoint)
 
-const PORT = process.env.PORT || 3001 // port for heroku or dev
+const PORT = process.env.PORT // server port
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`) 

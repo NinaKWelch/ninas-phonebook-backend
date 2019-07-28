@@ -27,7 +27,7 @@ if (process.argv.length === 5) {
         .then(response => {
             console.log(`Added ${person.name} number ${person.number} to phonebook`);
             mongoose.connection.close();
-    })
+        })
 } else if (process.argv.length === 3) {
     console.log('Phonebook:')
 
@@ -37,8 +37,8 @@ if (process.argv.length === 5) {
             result.forEach(person => {
             console.log(person.name + ' ' + person.number)
             })
-        mongoose.connection.close()
-    })
+            mongoose.connection.close()
+        })
 } else {
     console.log('Give your password, and persons name and number as arguments, in that order')
     process.exit(1)
