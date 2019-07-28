@@ -42,7 +42,7 @@ let persons = [
 
 app.get('/info', (request, response) => {
     const date = new Date()
-    const content = '<p>Phonebook has info for ' + persons.length + ' people.</br>' + date + '</p>'
+    const content = '<p>Phonebook has info for ' + Person.length + ' people.</br>' + date + '</p>'
 
     response.send(content)
 })
@@ -55,6 +55,18 @@ app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons => {
         response.json(persons.map(person => person.toJSON())) //returns a new array with every item mapped to a new object
     });    
+})
+
+app.get('/api/persons/:id', (request, response, next) => {
+    Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person.toJSON())
+      } else {
+        response.status(404).end() // returns error message 404 and no data
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
@@ -106,19 +118,6 @@ app.put('/api/persons/:id', (request, response, next) => {
     })
     .catch(error => next(error))
 })
-
-/*
-app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (!person) {
-        response.status(404).end() // returns error message 404 and no data
-    } 
-
-    response.json(person)
-})
-*/
 
 // error handling - must be called after data requests
 const unknownEndpoint = (request, response) => {
