@@ -78,9 +78,17 @@ app.post('/api/persons', (request, response) => {
           })
     }
     */
-   
+
     person.save().then(savedPerson => { // response sent only when operation succeeds 
         response.json(savedPerson.toJSON()) // sent data is formatted
+    })
+})
+
+
+app.delete('/api/persons/:id', (request, response) => {
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
     })
 })
 
@@ -94,13 +102,6 @@ app.get('/api/persons/:id', (request, response) => {
     } 
 
     response.json(person)
-})
-
-app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(person => person.id !== id)
-
-    response.status(204).end()
 })
 */
 
