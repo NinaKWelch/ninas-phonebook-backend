@@ -1,14 +1,16 @@
 require('dotenv').config()
 
 const express = require('express')
-const app = express()
-const Person = require('./models/person')
 const bodyParser = require('body-parser')
-const morgan  = require('morgan')
 const cors = require('cors')
+const morgan  = require('morgan')
+const Person = require('./models/person')
+
+const app = express()
 
 app.use(bodyParser.json())
 app.use(cors())
+app.use(express.static('build'))
 
 morgan.token('body', function (request) {
   return JSON.stringify(request.body)
@@ -17,8 +19,6 @@ morgan.token('body', function (request) {
 app.use(morgan(
   ':method :url :status :res[content-length] - :response-time ms :body'
 ))
-
-app.use(express.static('build'))
 
 app.get('/info', (request, response) => {
   const date = new Date()
@@ -32,7 +32,8 @@ app.get('/api', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  Person.find({})
+  Person
+    .find({})
     .then(persons => {
       response.json(persons.map(person =>
         person.toJSON() //returns a new array with every item mapped to a new object
@@ -41,7 +42,8 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
-  Person.findById(request.params.id)
+  Person
+    .findById(request.params.id)
     .then(person => {
       if (person) {
         response.json(person.toJSON())
@@ -53,13 +55,12 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 app.post('/api/persons', (request, response, next) => {
-  const body = request.body
-  const person = new Person({
-    name: body.name,
-    number: body.number
-  })
+  const { name, number } = request.body // deconstructed
 
-  person.save()
+  const person = new Person({ name, number })
+
+  person
+    .save()
     .then(savedPerson => savedPerson.toJSON()) // data is formatted
     .then(savedAndFormattedPerson => {
       response.json(savedAndFormattedPerson)
@@ -68,7 +69,8 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
-  Person.findByIdAndRemove(request.params.id)
+  Person
+    .findByIdAndRemove(request.params.id)
     .then(() => {
       response.status(204).end()
     })
@@ -76,14 +78,12 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
+  const { name, number } = request.body // deconstructed
 
-  const person = {
-    name: body.name,
-    number: body.number
-  }
+  const person = { name, number }
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person
+    .findByIdAndUpdate(request.params.id, person, { new: true })
     .then(updatedPerson => {
       response.json(updatedPerson.toJSON())
     })

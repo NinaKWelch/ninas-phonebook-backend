@@ -9,18 +9,13 @@ const url =
 
 mongoose.connect(url, { useNewUrlParser: true })
 
-const personSchema = new mongoose.Schema({
+const Person = mongoose.model('Person', {
   name: String,
   number: String
 })
 
-const Person = mongoose.model('Person', personSchema)
-
 if (process.argv.length === 5) {
-  const person = new Person({
-    name: name,
-    number: number
-  })
+  const person = new Person({ name, number }) // decostructed name: name, number: number
 
   person
     .save()
@@ -35,11 +30,11 @@ if (process.argv.length === 5) {
     .find({})
     .then(result => {
       result.forEach(person => {
-        console.log(person.name + ' ' + person.number)
+        console.log(person.name, person.number)
       })
       mongoose.connection.close()
     })
 } else {
-  console.log('Give your password, and persons name and number as arguments, in that order')
+  console.log('Give your password or password, persons name and number as arguments, in that order')
   process.exit(1)
 }
